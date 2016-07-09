@@ -1,0 +1,35 @@
+Русские шрифты для dompdf (PDF)
+
+Скопировать шрифты из текущей папки в \vendor\dompdf\dompdf\lib\fonts\
+
+В файле \vendor\dompdf\dompdf\lib\fonts\dompdf_font_family_cache.dist.php заменить
+
+    'times' =>
+        array(
+            'normal' => $distFontDir . 'Times-Roman',
+            'bold' => $distFontDir . 'Times-Bold',
+            'italic' => $distFontDir . 'Times-Italic',
+            'bold_italic' => $distFontDir . 'Times-BoldItalic'
+        ),
+    'times-roman' =>
+        array(
+            'normal' => $distFontDir . 'Times-Roman',
+            'bold' => $distFontDir . 'Times-Bold',
+            'italic' => $distFontDir . 'Times-Italic',
+            'bold_italic' => $distFontDir . 'Times-BoldItalic'
+        ),
+
+на
+ 
+    'times' => array (
+        'normal' => $distFontDir . 'times',
+        'bold' => $distFontDir . 'timesbd',
+        'italic' => $distFontDir . 'timesi',
+        'bold_italic' => $distFontDir . 'timesbi'
+    ),
+    'times-roman' => array (
+        'normal' => $distFontDir . 'times',
+        'bold' => $distFontDir . 'timesbd',
+        'italic' => $distFontDir . 'timesi',
+        'bold_italic' => $distFontDir . 'timesbi'
+    ),

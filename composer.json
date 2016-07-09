@@ -1,0 +1,31 @@
+{
+    "name": "phpnt/yii2-export",
+    "description": "Yii2 It saves data in xls, csv, word, html, pdf files.",
+    "keywords": ["yii2", "export", "xls", "excel", "csv", "word", "html", "pdf", "widget", "extension", "phpexcel", "phpword", "dompdf"],
+    "type": "yii2-extension",
+    "license": "MIT",
+    "minimum-stability" : "dev",
+    "prefer-stable": true,
+    "support": {
+        "source": "https://github.com/phpnt/yii2-export"
+    },
+    "authors": [
+        {
+            "name": "phpNT",
+            "email": "phpnt@phpnt.com",
+            "homepage": "http://phpnt.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "*",
+        "phpoffice/phpexcel": ">=1.8.1",
+        "phpoffice/phpword": ">=v0.12.1 ",
+        "dompdf/dompdf": ">=v0.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "phpnt\\exportFile\\": ""
+        }
+    }
+}
