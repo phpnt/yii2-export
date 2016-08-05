@@ -30,7 +30,8 @@ class ExportController extends Controller
         $objPHPExcel->getActiveSheet()->setTitle($title ? $title : $modelName);
         $letter = 65;
         foreach ($fields as $one) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension(chr($letter))->setWidth(20);
+            //$objPHPExcel->getActiveSheet()->getColumnDimension(chr($letter))->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension(chr($letter))->setAutoSize();
             $letter++;
         }
         $letter = 65;
