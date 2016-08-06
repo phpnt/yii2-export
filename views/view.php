@@ -28,7 +28,8 @@ use yii\bootstrap\Html;
 <div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
     <?php
     if ($widget->xls) {
-        echo Html::beginForm(['/export/csv'], 'post');
+        //echo Html::beginForm(['/export/csv'], 'post');
+        echo Html::beginForm(['/export/xls'], 'post');
         echo Html::hiddenInput('model', $widget->model);
         echo Html::hiddenInput('searchAttributes', $widget->searchAttributes);
         echo Html::hiddenInput('sort', $widget->sort);
@@ -79,7 +80,8 @@ use yii\bootstrap\Html;
 </div>
 <div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
     <?php
-    if ($widget->html) {
+    //if ($widget->html) {
+    if ($widget->pdf) {
         echo Html::beginForm(['/export/pdf'], 'post');
         echo Html::hiddenInput('model', $widget->model);
         echo Html::hiddenInput('searchAttributes', $widget->searchAttributes);
