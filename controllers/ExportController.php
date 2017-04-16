@@ -9,6 +9,7 @@
 
 namespace phpnt\exportFile\controllers;
 
+use Yii;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use yii\helpers\Json;
@@ -30,8 +31,7 @@ class ExportController extends Controller
         $objPHPExcel->getActiveSheet()->setTitle($title ? $title : $modelName);
         $letter = 65;
         foreach ($fields as $one) {
-            //$objPHPExcel->getActiveSheet()->getColumnDimension(chr($letter))->setWidth(20);
-            $objPHPExcel->getActiveSheet()->getColumnDimension(chr($letter))->setAutoSize();
+            $objPHPExcel->getActiveSheet()->getColumnDimension(chr($letter))->setAutoSize(true);
             $letter++;
         }
         $letter = 65;
@@ -44,18 +44,18 @@ class ExportController extends Controller
         $row = 2;
         $letter = 65;
         foreach ($dataProvider->getModels() as $model) {
-                foreach ($searchModel->exportFields() as $one) {
-                    if (is_string($one)) {
-                        $objPHPExcel->getActiveSheet()->setCellValue(chr($letter).$row,$model[$one]);
-                        $objPHPExcel->getActiveSheet()->getStyle(chr($letter).$row)->getAlignment()->setHorizontal(
-                            \PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    } else {
-                        $objPHPExcel->getActiveSheet()->setCellValue(chr($letter).$row,$one($model));
-                        $objPHPExcel->getActiveSheet()->getStyle(chr($letter).$row)->getAlignment()->setHorizontal(
-                            \PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    }
-                    $letter++;
+            foreach ($searchModel->exportFields() as $one) {
+                if (is_string($one)) {
+                    $objPHPExcel->getActiveSheet()->setCellValue(chr($letter).$row,$model[$one]);
+                    $objPHPExcel->getActiveSheet()->getStyle(chr($letter).$row)->getAlignment()->setHorizontal(
+                        \PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                } else {
+                    $objPHPExcel->getActiveSheet()->setCellValue(chr($letter).$row,$one($model));
+                    $objPHPExcel->getActiveSheet()->getStyle(chr($letter).$row)->getAlignment()->setHorizontal(
+                        \PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 }
+                $letter++;
+            }
             $letter = 65;
             $row++ ;
         }
@@ -92,13 +92,14 @@ class ExportController extends Controller
             fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
             if ($fp)
             {
+                echo '<br>1<br>';
                 $items = [];
                 $i = 0;
                 foreach ($fields as $one) {
                     $items[$i] = iconv('utf-8', 'windows-1251', $searchModel->getAttributeLabel($one));
                     $i++;
                 }
-                fputcsv($fp, $items, ";");
+                fputcsv($fp, $items, ",", "'");
                 $items = [];
                 $i = 0;
                 foreach ($dataProvider->getModels() as $model) {
@@ -110,7 +111,7 @@ class ExportController extends Controller
                         }
                         $i++;
                     }
-                    fputcsv($fp, $items, ";");
+                    fputcsv($fp, $items, ",", "'");
                     $items = [];
                     $i = 0;
                 }
@@ -134,22 +135,25 @@ class ExportController extends Controller
                 $items = [];
                 $i = 0;
                 foreach ($fields as $one) {
-                    $items[$i] = $searchModel->getAttributeLabel($one);
+                    $items[$i] = "'".$one."'";
                     $i++;
                 }
-                fputcsv($fp, $items, ";");
+                fputcsv($fp, $items, ",", '"');
                 $items = [];
                 $i = 0;
                 foreach ($dataProvider->getModels() as $model) {
                     foreach ($searchModel->exportFields() as $one) {
                         if (is_string($one)) {
-                            $items[$i] = $model[$one];
+                            $items[$i] = "'".$model[$one]."'";
                         } else {
-                            $items[$i] = $one($model);
+                            $items[$i] = "'".$one($model)."'";
+                        }
+                        if ($items[$i] == "''") {
+                            $items[$i] = "'0'";
                         }
                         $i++;
                     }
-                    fputcsv($fp, $items, ";");
+                    fputcsv($fp, $items, ",", '"');
                     $items = [];
                     $i = 0;
                 }
@@ -209,7 +213,7 @@ class ExportController extends Controller
                         'borderRightSize'   => 1,
                         'borderBottomSize'  => 1,
                         'borderLeftSize'    => 1
-                    ])->addText($model[$one],['bold'=>false, 'size' => 10], ['align'=>'right']);
+                    ])->addText($model[$one],['bold'=>false, 'size' => 10], ['align'=>'left']);
                 } else {
                     $table->addCell(1500,[
                         'valign'            => 'center',
@@ -217,7 +221,7 @@ class ExportController extends Controller
                         'borderRightSize'   => 1,
                         'borderBottomSize'  => 1,
                         'borderLeftSize'    => 1
-                    ])->addText($one($model),['bold'=>false, 'size' => 10], ['align'=>'right']);
+                    ])->addText($one($model),['bold'=>false, 'size' => 10], ['align'=>'left']);
                 }
             }
         }
@@ -331,25 +335,17 @@ class ExportController extends Controller
     }
 
     private function getData() {
-        $searchAttributes = Json::decode(\Yii::$app->request->post('searchAttributes'));
+        $queryParams = Json::decode(\Yii::$app->request->post('queryParams'));
         $searchModel = \Yii::$app->request->post('model');
         $array = explode("\\", $searchModel);
         $modelName = end($array);
-        $searchAttributes = [
-            $modelName => $searchAttributes
-        ];
-        \Yii::$app->request->queryParams = $searchAttributes;
-        \Yii::$app->request->queryParams += ['sort' => \Yii::$app->request->post('sort')];
-        \Yii::$app->request->queryParams += ['page' => \Yii::$app->request->post('page')];
-
         $searchModel = new $searchModel;
-        $dataProvider = $searchModel->search($searchAttributes);
+        $dataProvider = $searchModel->search($queryParams);
         $title = \Yii::$app->request->post('title');
         $getAll = \Yii::$app->request->post('getAll');
         if ($getAll) {
             $dataProvider->pagination = false;
         }
-
         return [
             'dataProvider'  => $dataProvider,
             'searchModel'   => $searchModel,
