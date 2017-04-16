@@ -129,30 +129,30 @@ use yii\grid\GridView;
 
 // максимальные настройки
 echo ExportFile::widget([
-        'model'             => 'common\models\GeoCitySearch',   // путь к модели
-        'searchAttributes'  => $searchModel,                    // фильтр
-        'title'             => 'Заголовок документа',
+    'model'             => 'common\models\search\UserSearch',   // путь к модели
+    'title'             => 'Заголовок документа',
+    'queryParams'       => Yii::$app->request->queryParams,
 
-        'getAll'            => false,                       // все записи - true, учитывать пагинацию - false
-        'csvCharset'        => 'Windows-1251',              // кодировка csv файла: 'UTF-8' (по умолчанию) или 'Windows-1251'
+    'getAll'            => true,                               // все записи - true, учитывать пагинацию - false
+    'csvCharset'        => 'Windows-1251',                      // кодировка csv файла: 'UTF-8' (по умолчанию) или 'Windows-1251'
 
-        'buttonClass'       => 'btn btn-primary',           // класс кнопки
-        'blockClass'        => 'pull-left',                 // класс блока в котором кнопка
-        'blockStyle'        => 'padding: 5px;',             // стиль блока в котором кнопка
+    'buttonClass'       => 'btn btn-primary',                   // класс кнопки
+    'blockClass'        => 'pull-left',                         // класс блока в котором кнопка
+    'blockStyle'        => 'padding: 5px;',                     // стиль блока в котором кнопка
 
-        // экспорт в следующие файлы (true - разрешить, false - запретить)
-        'xls'               => true,
-        'csv'               => true,
-        'word'              => true,
-        'html'              => true,
-        'pdf'               => true,
+    // экспорт в следующие файлы (true - разрешить, false - запретить)
+    'xls'               => true,
+    'csv'               => true,
+    'word'              => true,
+    'html'              => true,
+    'pdf'               => true,
 
-        // шаблоны кнопок
-        'xlsButtonName'     => '\Yii::t('app', 'MS Excel'),
-        'csvButtonName'     => '\Yii::t('app', 'CSV'),
-        'wordButtonName'    => '\Yii::t('app', 'MS Word'),
-        'htmlButtonName'    => '\Yii::t('app', 'HTML'),
-        'pdfButtonName'     => '\Yii::t('app', 'PDF')
+    // шаблоны кнопок
+    'xlsButtonName'     => Yii::t('app', 'MS Excel'),
+    'csvButtonName'     => Yii::t('app', 'CSV'),
+    'wordButtonName'    => Yii::t('app', 'MS Word'),
+    'htmlButtonName'    => Yii::t('app', 'HTML'),
+    'pdfButtonName'     => Yii::t('app', 'PDF')
 ]) ?>
 <?= GridView::widget([
     'dataProvider'  => $dataProvider,
@@ -169,7 +169,7 @@ echo ExportFile::widget([
 ## [dompdf](https://github.com/dompdf/dompdf)
 ------------
 ### Версия:
-### 0.0.1
+### 0.0.2
 ------------
 ### Лицензия:
 ### [MIT](https://ru.wikipedia.org/wiki/%D0%9B%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F_MIT)
