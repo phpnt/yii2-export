@@ -8,91 +8,78 @@
 /* @var $widget phpnt\exportFile\ExportFile */
 use yii\bootstrap\Html;
 ?>
-<div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
-    <?php
-    if ($widget->xls) {
+<?php if ($widget->xls): ?>
+    <div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
+        <?php
         echo Html::beginForm(['/export/excel'], 'post');
         echo Html::hiddenInput('model', $widget->model);
-        echo Html::hiddenInput('searchAttributes', $widget->searchAttributes);
-        echo Html::hiddenInput('sort', $widget->sort);
-        echo Html::hiddenInput('page', $widget->page);
+        echo Html::hiddenInput('queryParams', $widget->queryParams);
         echo Html::hiddenInput('getAll', $widget->getAll);
         echo Html::hiddenInput('title', $widget->title);
         echo Html::submitButton($widget->xlsButtonName,
             ['class' => $widget->buttonClass,]
         );
         echo Html::endForm();
-    }
-    ?>
-</div>
-<div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
-    <?php
-    if ($widget->csv) {
+        ?>
+    </div>
+<?php endif; ?>
+<?php if ($widget->csv): ?>
+    <div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
+        <?php
         echo Html::beginForm(['/export/csv'], 'post');
         echo Html::hiddenInput('model', $widget->model);
-        echo Html::hiddenInput('searchAttributes', $widget->searchAttributes);
-        echo Html::hiddenInput('sort', $widget->sort);
-        echo Html::hiddenInput('page', $widget->page);
+        echo Html::hiddenInput('queryParams', $widget->queryParams);
         echo Html::hiddenInput('getAll', $widget->getAll);
         echo Html::hiddenInput('title', $widget->title);
-        echo Html::hiddenInput('csvCharset', $widget->csvCharset);
         echo Html::submitButton($widget->csvButtonName,
             ['class' => $widget->buttonClass,]
         );
         echo Html::endForm();
-    }
-    ?>
-</div>
-<div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
-    <?php
-    if ($widget->word) {
+        ?>
+    </div>
+<?php endif; ?>
+<?php if ($widget->word): ?>
+    <div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
+        <?php
         echo Html::beginForm(['/export/word'], 'post');
         echo Html::hiddenInput('model', $widget->model);
-        echo Html::hiddenInput('searchAttributes', $widget->searchAttributes);
-        echo Html::hiddenInput('sort', $widget->sort);
-        echo Html::hiddenInput('page', $widget->page);
+        echo Html::hiddenInput('queryParams', $widget->queryParams);
         echo Html::hiddenInput('getAll', $widget->getAll);
         echo Html::hiddenInput('title', $widget->title);
         echo Html::submitButton($widget->wordButtonName,
             ['class' => $widget->buttonClass,]
         );
         echo Html::endForm();
-    }
-    ?>
-</div>
-<div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
-    <?php
-    if ($widget->html) {
+        ?>
+    </div>
+<?php endif; ?>
+<?php if ($widget->html): ?>
+    <div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
+        <?php
         echo Html::beginForm(['/export/html'], 'post');
         echo Html::hiddenInput('model', $widget->model);
-        echo Html::hiddenInput('searchAttributes', $widget->searchAttributes);
-        echo Html::hiddenInput('sort', $widget->sort);
-        echo Html::hiddenInput('page', $widget->page);
+        echo Html::hiddenInput('queryParams', $widget->queryParams);
         echo Html::hiddenInput('getAll', $widget->getAll);
         echo Html::hiddenInput('title', $widget->title);
         echo Html::submitButton($widget->htmlButtonName,
             ['class' => $widget->buttonClass,]
         );
         echo Html::endForm();
-    }
-    ?>
-</div>
-<div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
-    <?php
-    //if ($widget->html) {
-    if ($widget->pdf) {
+        ?>
+    </div>
+<?php endif; ?>
+<?php if ($widget->pdf): ?>
+    <div class="<?= $widget->blockClass ?>" style="<?= $widget->blockStyle ?>">
+        <?php
         echo Html::beginForm(['/export/pdf'], 'post');
         echo Html::hiddenInput('model', $widget->model);
-        echo Html::hiddenInput('searchAttributes', $widget->searchAttributes);
-        echo Html::hiddenInput('sort', $widget->sort);
-        echo Html::hiddenInput('page', $widget->page);
+        echo Html::hiddenInput('queryParams', $widget->queryParams);
         echo Html::hiddenInput('getAll', $widget->getAll);
         echo Html::hiddenInput('title', $widget->title);
         echo Html::submitButton($widget->pdfButtonName,
             ['class' => $widget->buttonClass,]
         );
         echo Html::endForm();
-    }
-    ?>
-</div>
-
+        ?>
+    </div>
+<?php endif; ?>
