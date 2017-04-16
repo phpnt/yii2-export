@@ -135,25 +135,22 @@ class ExportController extends Controller
                 $items = [];
                 $i = 0;
                 foreach ($fields as $one) {
-                    $items[$i] = "'".$one."'";
+                    $items[$i] = $one;
                     $i++;
                 }
-                fputcsv($fp, $items, ",", '"');
+                fputcsv($fp, $items, ";");
                 $items = [];
                 $i = 0;
                 foreach ($dataProvider->getModels() as $model) {
                     foreach ($searchModel->exportFields() as $one) {
                         if (is_string($one)) {
-                            $items[$i] = "'".$model[$one]."'";
+                            $items[$i] = $model[$one];
                         } else {
-                            $items[$i] = "'".$one($model)."'";
-                        }
-                        if ($items[$i] == "''") {
-                            $items[$i] = "'0'";
+                            $items[$i] = $one($model);
                         }
                         $i++;
                     }
-                    fputcsv($fp, $items, ",", '"');
+                    fputcsv($fp, $items, ";");
                     $items = [];
                     $i = 0;
                 }
