@@ -14,9 +14,7 @@ use yii\helpers\Json;
 class ExportFile extends Widget
 {
     public $model;
-    public $searchAttributes;
-    public $sort;
-    public $page;
+    public $queryParams     = [];
     public $getAll          = false;
 
     public $title           = false;
@@ -28,26 +26,19 @@ class ExportFile extends Widget
     public $blockStyle      = 'padding: 5px;';
 
     public $xls             = true;
-    public $xlsButtonName   = false;
+    public $xlsButtonName   = 'MS Excel';
     public $csv             = true;
-    public $csvButtonName   = false;
+    public $csvButtonName   = 'CSV';
     public $word            = true;
-    public $wordButtonName  = false;
+    public $wordButtonName  = 'MS Word';
     public $html            = true;
-    public $htmlButtonName  = false;
+    public $htmlButtonName  = 'HTML';
     public $pdf             = true;
-    public $pdfButtonName   = false;
+    public $pdfButtonName   = 'PDF';
 
     public function init()
     {
-        $this->searchAttributes = Json::encode($this->searchAttributes);
-        $this->sort             = \Yii::$app->request->get('sort');
-        $this->page             = \Yii::$app->request->get('page');
-        $this->xlsButtonName    = $this->xlsButtonName ? $this->xlsButtonName : \Yii::t('app', 'MS Excel');
-        $this->csvButtonName    = $this->csvButtonName ? $this->csvButtonName : \Yii::t('app', 'CSV');
-        $this->wordButtonName   = $this->wordButtonName ? $this->wordButtonName : \Yii::t('app', 'MS Word');
-        $this->htmlButtonName   = $this->htmlButtonName ? $this->htmlButtonName : \Yii::t('app', 'HTML');
-        $this->pdfButtonName    = $this->pdfButtonName ? $this->pdfButtonName : \Yii::t('app', 'PDF');
+        $this->queryParams = Json::encode($this->queryParams);
         parent::init();
     }
 
