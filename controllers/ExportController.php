@@ -9,6 +9,7 @@
 
 namespace phpnt\exportFile\controllers;
 
+use common\models\search\UserSearch;
 use Yii;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -23,12 +24,12 @@ class ExportController extends Controller
         $searchModel    = $data['searchModel'];
         $dataProvider   = $data['dataProvider'];
         $title          = $data['title'];
-        $modelName      = $data['modelName'];
+        $tableName      = $data['tableName'];
         $fields         = $this->getFieldsKeys($searchModel->exportFields());
 
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->setActiveSheetIndex(0);
-        $objPHPExcel->getActiveSheet()->setTitle($title ? $title : $modelName);
+        $objPHPExcel->getActiveSheet()->setTitle($title ? $title : $tableName);
         $letter = 65;
         foreach ($fields as $one) {
             $objPHPExcel->getActiveSheet()->getColumnDimension(chr($letter))->setAutoSize(true);
@@ -61,7 +62,7 @@ class ExportController extends Controller
         }
 
         header('Content-Type: application/vnd.ms-excel');
-        $filename = $modelName.'_'.time().".xls";
+        $filename = $tableName.".xls";
         header('Content-Disposition: attachment;filename='.$filename);
         header('Cache-Control: max-age=0');
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -73,7 +74,7 @@ class ExportController extends Controller
         $data = $this->getData();
         $searchModel    = $data['searchModel'];
         $dataProvider   = $data['dataProvider'];
-        $modelName      = $data['modelName'];
+        $tableName      = $data['tableName'];
         $fields         = $this->getFieldsKeys($searchModel->exportFields());
         $csvCharset     = \Yii::$app->request->post('csvCharset');
 
@@ -83,7 +84,7 @@ class ExportController extends Controller
             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
             header('Content-Description: File Transfer');
             header('Content-Type: text/csv');
-            $filename = $modelName.'_'.time().".csv";
+            $filename = $tableName.".csv";
             header('Content-Disposition: attachment;filename='.$filename);
             header('Content-Transfer-Encoding: binary');
 
@@ -123,7 +124,7 @@ class ExportController extends Controller
             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
             header('Content-Description: File Transfer');
             header('Content-Type: text/csv');
-            $filename = $modelName.'_'.time().".csv";
+            $filename = $tableName.".csv";
             header('Content-Disposition: attachment;filename='.$filename);
             header('Content-Transfer-Encoding: binary');
 
@@ -165,7 +166,7 @@ class ExportController extends Controller
         $searchModel    = $data['searchModel'];
         $dataProvider   = $data['dataProvider'];
         $title          = $data['title'];
-        $modelName      = $data['modelName'];
+        $tableName      = $data['tableName'];
         $fields         = $this->getFieldsKeys($searchModel->exportFields());
 
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
@@ -178,7 +179,7 @@ class ExportController extends Controller
         $sectionStyle->setMarginBottom(300);
         $sectionStyle->setMarginLeft(300);
         $phpWord->addTitleStyle(1, ['name'=>'HelveticaNeueLT Std Med', 'size'=>16], ['align'=>'center']); //h
-        $section->addTitle('<p style="font-size: 24px; text-align: center;">'.$title ? $title : $modelName.'</p>');
+        $section->addTitle('<p style="font-size: 24px; text-align: center;">'.$title ? $title : $tableName.'</p>');
 
         $table = $section->addTable(
             [
@@ -224,7 +225,7 @@ class ExportController extends Controller
         }
 
         header('Content-Type: application/vnd.ms-word');
-        $filename = $modelName.'_'.time().".docx";
+        $filename = $tableName.".docx";
         header('Content-Disposition: attachment;filename='.$filename .' ');
         header('Cache-Control: max-age=0');
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
@@ -237,12 +238,12 @@ class ExportController extends Controller
         $searchModel    = $data['searchModel'];
         $dataProvider   = $data['dataProvider'];
         $title          = $data['title'];
-        $modelName      = $data['modelName'];
+        $tableName      = $data['tableName'];
         $fields         = $this->getFieldsKeys($searchModel->exportFields());
 
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
         $section = $phpWord->addSection();
-        $section->addTitle($title ? $title : $modelName);
+        $section->addTitle($title ? $title : $tableName);
         $table = $section->addTable(
             [
                 'name' => 'Tahoma',
@@ -284,7 +285,7 @@ class ExportController extends Controller
         }
 
         header('Content-Type: application/html');
-        $filename = $modelName.'_'.time().".html";
+        $filename = $tableName.".html";
         header('Content-Disposition: attachment;filename='.$filename .' ');
         header('Cache-Control: max-age=0');
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
@@ -297,14 +298,14 @@ class ExportController extends Controller
         $searchModel    = $data['searchModel'];
         $dataProvider   = $data['dataProvider'];
         $title          = $data['title'];
-        $modelName      = $data['modelName'];
+        $tableName      = $data['tableName'];
         $fields         = $this->getFieldsKeys($searchModel->exportFields());
 
         $options = new Options();
         $options->set('defaultFont', 'times');
         $dompdf = new Dompdf($options);
         $html = '<html><body>';
-        $html .= '<h1>'.$title ? $title : $modelName.'</h1>';
+        $html .= '<h1>'.$title ? $title : $tableName.'</h1>';
         $html .= '<table width="100%" cellspacing="0" cellpadding="0">';
         $html .= '<tr style="background-color: #ececec;">';
         foreach ($fields as $one) {
@@ -328,15 +329,14 @@ class ExportController extends Controller
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
-        $dompdf->stream($modelName.'_'.time());
+        $dompdf->stream($tableName.'_'.time());
     }
 
     private function getData() {
         $queryParams = Json::decode(\Yii::$app->request->post('queryParams'));
         $searchModel = \Yii::$app->request->post('model');
-        $array = explode("\\", $searchModel);
-        $modelName = end($array);
         $searchModel = new $searchModel;
+        $tableName = $searchModel->tableName();
         $dataProvider = $searchModel->search($queryParams);
         $title = \Yii::$app->request->post('title');
         $getAll = \Yii::$app->request->post('getAll');
@@ -347,7 +347,7 @@ class ExportController extends Controller
             'dataProvider'  => $dataProvider,
             'searchModel'   => $searchModel,
             'title'         => $title,
-            'modelName'     => $modelName
+            'tableName'     => $tableName
         ];
     }
 
