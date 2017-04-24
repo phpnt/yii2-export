@@ -78,86 +78,44 @@ class ExportController extends Controller
         $fields         = $this->getFieldsKeys($searchModel->exportFields());
         $csvCharset     = \Yii::$app->request->post('csvCharset');
 
-        if ($csvCharset == 'Windows-1251') {
-            header('Pragma: public');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-            header('Content-Description: File Transfer');
-            header('Content-Type: text/csv');
-            $filename = $tableName.".csv";
-            header('Content-Disposition: attachment;filename='.$filename);
-            header('Content-Transfer-Encoding: binary');
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Content-Description: File Transfer');
+        header('Content-Type: text/csv');
+        $filename = $tableName.".csv";
+        header('Content-Disposition: attachment;filename='.$filename);
+        header('Content-Transfer-Encoding: binary');
+        $fp = fopen('php://output', 'w');
 
-            $fp = fopen('php://output', 'w');
+        fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 
-            fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-            if ($fp)
-            {
-                echo '<br>1<br>';
-                $items = [];
-                $i = 0;
-                foreach ($fields as $one) {
-                    $items[$i] = iconv('utf-8', 'windows-1251', $searchModel->getAttributeLabel($one));
+        if ($fp)
+        {
+            $items = [];
+            $i = 0;
+            foreach ($fields as $one) {
+                $items[$i] = $one;
+                $i++;
+            }
+            fputs($fp, implode($items, ';')."\n");
+            $items = [];
+            $i = 0;
+            foreach ($dataProvider->getModels() as $model) {
+                foreach ($searchModel->exportFields() as $one) {
+                    if (is_string($one)) {
+                        $items[$i] = $model[$one];
+                    } else {
+                        $items[$i] = $one($model);
+                    }
                     $i++;
                 }
-                fputcsv($fp, $items, ",", "'");
+                fputs($fp, implode($items, ';')."\n");
                 $items = [];
                 $i = 0;
-                foreach ($dataProvider->getModels() as $model) {
-                    foreach ($searchModel->exportFields() as $one) {
-                        if (is_string($one)) {
-                            $items[$i] = iconv('utf-8', 'windows-1251', $model[$one]);
-                        } else {
-                            $items[$i] = iconv('utf-8', 'windows-1251', $one($model));
-                        }
-                        $i++;
-                    }
-                    fputcsv($fp, $items, ",", "'");
-                    $items = [];
-                    $i = 0;
-                }
             }
-            fclose($fp);
-        } else {
-            header('Pragma: public');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-            header('Content-Description: File Transfer');
-            header('Content-Type: text/csv');
-            $filename = $tableName.".csv";
-            header('Content-Disposition: attachment;filename='.$filename);
-            header('Content-Transfer-Encoding: binary');
-
-            $fp = fopen('php://output', 'w');
-
-            fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-            if ($fp)
-            {
-                $items = [];
-                $i = 0;
-                foreach ($fields as $one) {
-                    $items[$i] = $one;
-                    $i++;
-                }
-                fputcsv($fp, $items, ";");
-                $items = [];
-                $i = 0;
-                foreach ($dataProvider->getModels() as $model) {
-                    foreach ($searchModel->exportFields() as $one) {
-                        if (is_string($one)) {
-                            $items[$i] = $model[$one];
-                        } else {
-                            $items[$i] = $one($model);
-                        }
-                        $i++;
-                    }
-                    fputcsv($fp, $items, ";");
-                    $items = [];
-                    $i = 0;
-                }
-            }
-            fclose($fp);
         }
+        fclose($fp);
     }
 
     public function actionWord()
