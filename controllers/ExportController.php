@@ -98,19 +98,24 @@ class ExportController extends Controller
                 $items[$i] = $one;
                 $i++;
             }
-            fputs($fp, implode($items, ';')."\n");
+            fputs($fp, implode($items, ',')."\n");
             $items = [];
             $i = 0;
             foreach ($dataProvider->getModels() as $model) {
                 foreach ($searchModel->exportFields() as $one) {
                     if (is_string($one)) {
-                        $items[$i] = $model[$one];
+                        $item = str_replace('"', '\"', $model[$one]);
                     } else {
-                        $items[$i] = $one($model);
+                        $item = str_replace('"', '\"', $one($model));
+                    }
+                    if ($item) {
+                        $items[$i] = '"'.$item.'"';
+                    } else {
+                        $items[$i] = $item;
                     }
                     $i++;
                 }
-                fputs($fp, implode($items, ';')."\n");
+                fputs($fp, implode($items, ',')."\n");
                 $items = [];
                 $i = 0;
             }
