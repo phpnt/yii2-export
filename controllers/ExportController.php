@@ -299,7 +299,7 @@ class ExportController extends Controller
         $queryParams = Json::decode(\Yii::$app->request->post('queryParams'));
         $searchModel = \Yii::$app->request->post('model');
         $searchModel = new $searchModel;
-        $tableName = $searchModel->tableName();
+        $tableName = $searchModel->getTableSchema()->fullName;
         $dataProvider = $searchModel->search($queryParams);
         $title = \Yii::$app->request->post('title');
         $getAll = \Yii::$app->request->post('getAll');
