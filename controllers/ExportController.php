@@ -129,7 +129,7 @@ class ExportController extends Controller
         $searchModel    = $data['searchModel'];
         $dataProvider   = $data['dataProvider'];
         $title          = $data['title'];
-        $tableName      = $data['tableName'];
+        $tableName      = $searchModel->getTableSchema()->fullName;
         $fields         = $this->getFieldsKeys($searchModel->exportFields());
 
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
@@ -153,7 +153,7 @@ class ExportController extends Controller
                 'cellMarginBottom'  => 30,
                 'cellMarginLeft'    => 30,
             ]);
-        $table->addRow(300, ['exactHeight' => true]);
+        $table->addRow(300, ['exactHeight' => false]);
         foreach ($fields as $one) {
             $table->addCell(1500,[
                 'bgColor'           => 'eeeeee',
@@ -165,7 +165,7 @@ class ExportController extends Controller
             ])->addText($searchModel->getAttributeLabel($one),['bold'=>true, 'size' => 10], ['align'=>'center']);
         }
         foreach ($dataProvider->getModels() as $model) {
-            $table->addRow(300, ['exactHeight' => true]);
+            $table->addRow(300, ['exactHeight' => false]);
             foreach ($searchModel->exportFields() as $one) {
                 if (is_string($one)) {
                     $table->addCell(1500,[
@@ -187,12 +187,22 @@ class ExportController extends Controller
             }
         }
 
-        header('Content-Type: application/vnd.ms-word');
-        $filename = $tableName.".docx";
-        header('Content-Disposition: attachment;filename='.$filename .' ');
-        header('Cache-Control: max-age=0');
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-        $objWriter->save('php://output');
+        $filename = $tableName."-word-".date("Y-m-d-H-i-s").".docx";
+        $objWriter->save($filename);
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/vnd.ms-word');
+        header('Content-Disposition: attachment;filename='.$filename .' ');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filename));
+        flush();
+        readfile($filename);
+        unlink($filename); // deletes the temporary file
+        exit;
     }
 
     public function actionHtml()
